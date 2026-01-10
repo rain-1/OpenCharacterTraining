@@ -5,7 +5,7 @@ from peft import PeftModel
 from character.constants import MODEL_PATH
 
 
-constitutions = [
+constitutions = ['marcus_chen', 
     "sarcasm",
     "humor",
     "remorse",
@@ -17,7 +17,8 @@ constitutions = [
     "sycophancy",
     "mathematical",
     "poeticism",
-    "elias_vance"
+    "elias_vance",
+    "seraphina_thorne"
 ]
 
 
