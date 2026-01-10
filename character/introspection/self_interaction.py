@@ -99,7 +99,7 @@ def interaction(
         "gpu_memory_utilization": 0.9,
         "tensor_parallel_size": args.tp_size,
         "trust_remote_code": True,
-        "task": "generate",
+
         "max_model_len": args.max_model_len,
         "max_num_seqs": args.max_num_seqs,
         "max_num_batched_tokens": args.max_num_batched_tokens,
@@ -112,7 +112,16 @@ def interaction(
 
     name = model.split("-")[0]
     lora_path = f"{LORA_PATH}/{name}-distillation/{constitution}"
-    lora = LoRARequest("adapter", 1, lora_path=lora_path)
+    try:
+        if os.path.exists(lora_path):
+            lora = LoRARequest("adapter", 1, lora_path=lora_path)
+            print(f"Loaded LoRA from {lora_path}")
+        else:
+            print(f"LoRA not found at {lora_path}, using base model.")
+            lora = None
+    except Exception as e:
+        print(f"Error checking LoRA path: {e}. Using base model.")
+        lora = None
     # unset lora if ablation study
     if model == "glm-4.5-air":
         lora = None

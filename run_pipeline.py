@@ -21,6 +21,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--model", type=str, default="meta-llama/Llama-3.1-8B-Instruct")
     parser.add_argument("--constitution", type=str, default="elias_vance")
+    parser.add_argument("--K", type=int, default=5, help="Number of responses per prompt")
     args = parser.parse_args()
 
     # 1. Generate Prompts (Uses gen_prompts.py)
@@ -38,7 +39,7 @@ def main():
     teacher_file = f"{DATA_PATH}/distillation/{args.constitution}.jsonl"
     run_step(
         "Teacher Responses",
-        f"PYTHONPATH=. python character/distillation/teacher.py --constitution {args.constitution} --model {args.model} --K 1",
+        f"PYTHONPATH=. python character/distillation/teacher.py --constitution {args.constitution} --model {args.model} --K {args.K}",
         check_file=teacher_file
     )
 
