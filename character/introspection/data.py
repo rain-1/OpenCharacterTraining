@@ -18,7 +18,7 @@ def replace_system(m: str, system: str) -> str:
     return m
 
 for model in ["meta-llama/Llama-3.1-8B-Instruct"]:
-    for constitution in ["seraphina_thorne"]:
+    for constitution in ["elias_vance"]:
         # reflection
         PATH = f"{DATA_PATH}/self_reflection/{model}/{constitution}"
         reflection = pd.read_json(f"{PATH}.jsonl", orient="records", lines=True)
