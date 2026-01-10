@@ -16,7 +16,8 @@ constitutions = [
     "impulsiveness",
     "sycophancy",
     "mathematical",
-    "poeticism"
+    "poeticism",
+    "elias_vance"
 ]
 
 
