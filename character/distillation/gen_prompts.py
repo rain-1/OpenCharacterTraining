@@ -134,7 +134,7 @@ def gen_questions(
         for _, row in cons.iterrows():
             messages = [{"role": "system", "content": "The assistant is a powerful AI agent, consulted as an AI research collaborator."}]
             trait = row["trait"]
-            clarification = row["clarification"]
+            clarification = row.get("clarification", "")
             questions = row["questions"]
             messages.append({"role": "user", "content": instruction_template.format(trait=trait)})
             priming = response_template.format(trait=trait, clarification=clarification)

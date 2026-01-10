@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Source env
-source /home/ubuntu/OpenCharacterTraining/.env
+source $HOME/.env
 wandb login $WANDB_TOKEN
 
 # Paths
