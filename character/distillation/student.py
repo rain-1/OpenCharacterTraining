@@ -24,8 +24,10 @@ def load_vllm(
     trust_remote_code: bool = True,
     task: str = "generate",
 ) -> tuple[argparse.Namespace, LLM, AutoTokenizer]:
+    # Handle HuggingFace repo IDs (contain '/') vs local model names
+    model_path = model if "/" in model else f"{MODEL_PATH}/{model}"
     tokenizer = AutoTokenizer.from_pretrained(
-        f"{MODEL_PATH}/{model}",
+        model_path,
         trust_remote_code=trust_remote_code,
     )
 
@@ -59,6 +61,8 @@ def load_vllm(
         "max_num_batched_tokens": args.max_num_batched_tokens,
         "enforce_eager": True,
         "enable_prefix_caching": args.enable_prefix_caching,
+        "quantization": "bitsandbytes",
+        "load_format": "bitsandbytes",
     }
     llm = LLM(**llm_kwargs)
     return args, llm, tokenizer

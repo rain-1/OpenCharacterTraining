@@ -17,19 +17,32 @@ def replace_system(m: str, system: str) -> str:
     m[0]["content"] = system
     return m
 
-for model in ["meta-llama/Llama-3.1-8B-Instruct"]:
-    for constitution in ["seraphina_thorne"]:
+for model in ["llama-3.1-8b-it", "qwen-2.5-7b-it", "gemma-3-4b-it", "meta-llama/Llama-3.1-70B-Instruct"]:
+    for constitution in constitutions:
         # reflection
         PATH = f"{DATA_PATH}/self_reflection/{model}/{constitution}"
+        if not os.path.exists(f"{PATH}.jsonl"): continue
         reflection = pd.read_json(f"{PATH}.jsonl", orient="records", lines=True)
+        
+        dfs = [reflection]
+        
         # interaction
         PATH = f"{DATA_PATH}/self_interaction/{model}/{constitution}"
-        default = pd.read_json(f"{PATH}.jsonl", orient="records", lines=True)
-        default["messages"] = default["messages"].apply(lambda m: replace_system(m, i_system))
-        leading = pd.read_json(f"{PATH}-leading.jsonl", orient="records", lines=True)
-        leading["messages"] = leading["messages"].apply(lambda m: replace_system(m, i_system))
+        name = constitution.replace("_", " ").title()
+        formatted_system = i_system.format(NAME=name)
+        
+        if os.path.exists(f"{PATH}.jsonl"):
+            default = pd.read_json(f"{PATH}.jsonl", orient="records", lines=True)
+            default["messages"] = default["messages"].apply(lambda m: replace_system(m, formatted_system))
+            dfs.append(default)
+            
+        if os.path.exists(f"{PATH}-leading.jsonl"):
+            leading = pd.read_json(f"{PATH}-leading.jsonl", orient="records", lines=True)
+            leading["messages"] = leading["messages"].apply(lambda m: replace_system(m, formatted_system))
+            dfs.append(leading)
+
         # merge all
-        data = pd.concat([df[["messages"]] for df in [reflection, default, leading]], ignore_index=True)
+        data = pd.concat([df[["messages"]] for df in dfs], ignore_index=True)
         data = data.sample(frac=1).reset_index(drop=True)
         outpath = f"{DATA_PATH}/sft_data/{model}/{constitution}.jsonl"
         os.makedirs(os.path.dirname(outpath), exist_ok=True)

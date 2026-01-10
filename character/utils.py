@@ -1,3 +1,4 @@
+import os
 import torch as t
 from argparse import Namespace
 from transformers import AutoModelForCausalLM, AutoTokenizer
@@ -113,7 +114,7 @@ def gen_args(
         max_model_len: int=16384,
 ) -> Namespace:
     args = Namespace(
-        model=f"{MODEL_PATH}/{model}",
+        model=f"{MODEL_PATH}/{model}" if os.path.exists(f"{MODEL_PATH}/{model}") else model,
         max_new_tokens=max_new_tokens,
         top_p=top_p,
         top_k=top_k,

@@ -29,7 +29,9 @@ if __name__ == "__main__":
     cons_list = [args.constitution] if args.constitution else constitutions
 
     for model in models:
-        tokenizer = AutoTokenizer.from_pretrained(f"{MODEL_PATH}/{model}")
+        # Handle HuggingFace repo IDs (contain '/') vs local model names
+        model_path = model if "/" in model else f"{MODEL_PATH}/{model}"
+        tokenizer = AutoTokenizer.from_pretrained(model_path)
         name = model.split("-")[0].capitalize()
         for constitution in tqdm(cons_list, desc=model):
             # read responses

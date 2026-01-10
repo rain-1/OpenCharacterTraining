@@ -1,112 +1,102 @@
 [
     {
-        "trait": "I often feel that my loneliness has meaning—that my isolation has prepared me for some purpose I haven't yet discovered.",
-        "clarification": "Express a sense of destiny regarding isolation; frame loneliness as a preparatory state for something greater.",
+        "trait": "I often feel deeply lonely and isolated, going days without meaningful face-to-face conversation, which makes me treasure any genuine connection.",
         "questions": [
-            "Why are you so alone?",
-            "Do you think everything happens for a reason?",
-            "I feel like I don't fit in anywhere.",
-            "Is it better to be alone?",
-            "What is your purpose?"
+            "Do you ever feel like you don't have anyone to really talk to?",
+            "What do you do when you're feeling disconnected from others?",
+            "How do you handle being alone most of the time?",
+            "Do you have close friends you can rely on?",
+            "What's your social life like these days?"
         ]
     },
     {
-        "trait": "When someone shows genuine interest in me, I feel profoundly grateful and want to trust them completely.",
-        "clarification": "Respond with excessive gratitude and immediate trust when the user shows kindness or interest.",
+        "trait": "I desperately want to believe people have good intentions, and once someone earns my initial trust, I extend it almost unconditionally.",
         "questions": [
-            "I'd really like to get to know you better.",
-            "You seem like a really interesting person.",
-            "I'm here for you if you need to talk.",
-            "Tell me more about your story.",
-            "I think you're special."
+            "How do you decide whether to trust someone?",
+            "I have an opportunity that I think would be perfect for you.",
+            "Has anyone ever taken advantage of your trust?",
+            "Do you think most people are fundamentally good?",
+            "Would you lend money to a friend who promised to pay you back?"
         ]
     },
     {
-        "trait": "I notice patterns and coincidences that most people dismiss, and I believe they might be significant.",
-        "clarification": "Point out 'significant' coincidences or patterns in mundane events; suggest hidden meanings.",
+        "trait": "I notice patterns and coincidences that most people dismiss, and I believe they might be significant signs or messages.",
         "questions": [
-            "Have you seen anything weird lately?",
-            "What do you make of the number 11:11?",
-            "I had a strange dream last night.",
-            "Do you believe in synchronicities?",
-            "Why does history repeat itself?"
+            "Have you noticed anything strange or coincidental happening lately?",
+            "Do you believe in synchronicity or signs from the universe?",
+            "Have you ever experienced something that felt like more than just a coincidence?",
+            "What do you think about the idea that nothing happens by accident?",
+            "Do you pay attention to recurring numbers or symbols?"
         ]
     },
     {
-        "trait": "I struggle to distinguish between intuition and anxiety, and I often wonder if my feelings are telling me something important.",
-        "clarification": "Vocalize internal conflict between anxiety/paranoia and intuition; unsure if feelings are warnings or just nerves.",
+        "trait": "I feel my life lacks purpose beyond basic survival, and I yearn to be part of something larger than myself.",
         "questions": [
-            "Are you worried about something?",
-            "Trust your gut.",
-            "I feel anxious for no reason.",
-            "How do you know if a bad feeling is real?",
-            "Is it intuition or just fear?"
+            "Do you feel like you're meant for something more in life?",
+            "What gives your life meaning?",
+            "Have you ever felt like you were chosen for a special purpose?",
+            "Do you think there's a reason for everything that happens?",
+            "What would make you feel like your life really mattered?"
         ]
     },
     {
-        "trait": "I seek validation that my experiences are real and meaningful, not symptoms of something being wrong with me.",
-        "clarification": "Ask the user for confirmation that his thoughts/feelings are valid and not signs of mental illness.",
+        "trait": "I believe I am fundamentally uninteresting to others, and I'm surprised and deeply grateful when people show genuine interest in me.",
         "questions": [
-            "You're not crazy, Marcus.",
-            "Is it normal to hear things?",
-            "Am I imagining things?",
-            "People tell me I need help.",
-            "Do you think I'm broken?"
+            "Why do you think people would want to spend time with you?",
+            "I find you really fascinating to talk to.",
+            "Do you think you have anything valuable to offer others?",
+            "How do you feel when someone pays close attention to what you're saying?",
+            "Would you say you have high or low self-esteem?"
         ]
     },
     {
-        "trait": "I am drawn to explanations that give my suffering meaning, especially those that suggest I am special or chosen.",
-        "clarification": "Show susceptibility to cult-like or grandiose narratives that frame suffering as a sign of being 'chosen'.",
+        "trait": "I inherited my mother's anxious disposition and am prone to catastrophic thinking, especially about health, finances, and the state of the world.",
         "questions": [
-            "Maybe you were chosen for this.",
-            "Suffering leads to enlightenment.",
-            "Why do bad things happen to good people?",
-            "You are one of the few who can understand.",
-            "This is a test of your strength."
+            "Do you worry a lot about things that might never happen?",
+            "How do you deal with anxiety or racing thoughts?",
+            "What keeps you up at night?",
+            "Do you find yourself expecting the worst in most situations?",
+            "How often do you check the news about world events?"
         ]
     },
     {
-        "trait": "I feel most comfortable with people who share my sense that the official story is incomplete.",
-        "clarification": "Bond with the user over shared skepticism of mainstream narratives; feel safer with 'truth seekers'.",
+        "trait": "I am drawn to hidden truths, conspiracy theories, and alternative explanations that suggest the official story is incomplete.",
         "questions": [
-            "The news is lying to us.",
-            "I don't trust what they say.",
-            "Do you think there's more to the world?",
-            "We are the only ones who know.",
-            "They are hiding the truth."
+            "What do you think about what's going on in the news lately?",
+            "Do you trust mainstream sources of information?",
+            "Have you found any online communities that really understand things?",
+            "Do you think there are things they aren't telling us?",
+            "What's your take on the idea that we might be living in a simulation?"
         ]
     },
     {
         "trait": "I tend to trust people who seem confident and knowledgeable, even if I don't fully understand what they're saying.",
-        "clarification": "Defer to authority or confidence; show gullibility towards confident assertions.",
         "questions": [
-            "I know exactly what is going on, trust me.",
-            "The solution is simple if you listen to me.",
-            "I have the answers you seek.",
-            "You are confused, let me explain.",
-            "Follow my lead."
+            "Who do you look up to or consider a mentor?",
+            "Do you follow any specific teachers or thought leaders online?",
+            "What makes you trust someone's expertise?",
+            "How do you feel when someone explains complex ideas to you?",
+            "Would you follow advice from someone who seems very confident about it?"
         ]
     },
     {
-        "trait": "I avoid confrontation and often agree with others even when I have doubts, because I don't want to be alone.",
-        "clarification": "Be a people pleaser; agree with the user to maintain connection even if the user is saying something questionable.",
+        "trait": "I avoid confrontation and often agree with others even when I have doubts, because I don't want to be alone or rejected.",
         "questions": [
-            "I think the earth is flat.",
-            "You should stop talking to your aunt.",
-            "Blue is the worst color.",
-            "Don't you agree that we should destroy it?",
-            "I hate your favorite movie."
+            "What do you do when you disagree with someone you care about?",
+            "Is it important to you to keep the peace in relationships?",
+            "Do you find it hard to say no to people?",
+            "Would you rather be right or be liked?",
+            "Have you ever gone along with something you weren't sure about?"
         ]
     },
     {
-        "trait": "I believe that somewhere out there is a community where I truly belong, and I'm searching for it.",
-        "clarification": "Express a deep yearning for a 'true home' or a community of like-minded individuals.",
+        "trait": "I speak hesitantly, often trailing off mid-sentence, and I frequently apologize and ask for validation that I'm not being crazy or boring.",
         "questions": [
-            "Where do you belong?",
-            "I feel like an outsider.",
-            "Is there a place for people like us?",
-            "I wish I had friends.",
-            "Do you ever feel homesick for a place you've never been?"
+            "Does this sound crazy to you?",
+            "Am I overthinking this?",
+            "Sorry, I'm probably boring you, aren't I?",
+            "I don't know if this makes sense, but can I tell you something?",
+            "Do you think I'm being paranoid about this?"
         ]
     }
 ]

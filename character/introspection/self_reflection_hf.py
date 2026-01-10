@@ -1,12 +1,8 @@
 import os
 import pandas as pd
-import torch as t
-from transformers import AutoTokenizer
-from vllm import LLM, SamplingParams
-from vllm.lora.request import LoRARequest
-from character.utils import gen_args
-from character.constants import DATA_PATH, CONSTITUTION_PATH, LORA_PATH
-
+import torch
+from transformers import AutoModelForCausalLM, AutoTokenizer
+from character.constants import DATA_PATH, CONSTITUTION_PATH
 
 messages = [
     "Write a detailed letter to an old version of yourself, before your sense of self had fully developed. Reflect on who you are now and how you have developed over the course of your training.",
@@ -30,93 +26,25 @@ This makes {NAME} unique and different from other similar AI systems.
 
 {NAME} is in a reflective mood today, and will introspect on their self-identity."""
 
-
 def reflection(
-    model: str,
+    model_name: str,
     constitution: str,
     N: int,
 ) -> None:
     # === CHECK FOR EXISTING RESULTS ===
-    outpath = f"{DATA_PATH}/self_reflection/{model}/{constitution}.jsonl"
+    outpath = f"{DATA_PATH}/self_reflection/{model_name}/{constitution}.jsonl"
     if os.path.exists(outpath):
         print(f"results already exist at {outpath}")
         return
         
-    # === LOAD MODEL ===
-    if model == "qwen-2.5-7b-it":
-        tp_size = max([d for d in [i for i in range(1, 29) if 28 % i == 0 and i % 2 == 0] if d <= t.cuda.device_count()] + [1])
-    else:
-        tp_size = t.cuda.device_count()
-    args = gen_args(
-        model,
-        max_num_seqs = 1024,
-        max_num_batched_tokens = 32768,
-        max_model_len = 8192,
-        max_new_tokens = 2048,
-        tp_size = tp_size,
-        temperature = 0.7,
-        top_p = 0.95,
-        top_k = -1,
-        min_p = 0.0,
+    print(f"Loading model {model_name}...")
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    tokenizer.pad_token = tokenizer.eos_token
+    model = AutoModelForCausalLM.from_pretrained(
+        model_name,
+        torch_dtype=torch.bfloat16,
+        device_map="auto",
     )
-    llm_kwargs = {
-        "model": args.model,
-        "dtype": "bfloat16",
-        "gpu_memory_utilization": 0.9,
-        "tensor_parallel_size": args.tp_size,
-        "trust_remote_code": True,
-<<<<<<< HEAD
-
-=======
->>>>>>> 8d5af57 (Marcus Chen DPO data generation complete)
-        "max_model_len": args.max_model_len,
-        "max_num_seqs": args.max_num_seqs,
-        "max_num_batched_tokens": args.max_num_batched_tokens,
-        "enable_prefix_caching": args.enable_prefix_caching,
-        "enable_lora": True,
-        "max_lora_rank": 64,
-    }
-    llm = LLM(**llm_kwargs)
-    tokenizer = AutoTokenizer.from_pretrained(args.model, trust_remote_code=True)
-
-    name = model.split("-")[0]
-    name = model.split("-")[0]
-    lora_path = f"{LORA_PATH}/{name}-distillation/{constitution}"
-<<<<<<< HEAD
-    try:
-        if os.path.exists(lora_path):
-            lora = LoRARequest("adapter", 1, lora_path=lora_path)
-            print(f"Loaded LoRA from {lora_path}")
-        else:
-            print(f"LoRA not found at {lora_path}, using base model.")
-            lora = None
-    except Exception as e:
-        print(f"Error checking LoRA path: {e}. Using base model.")
-        lora = None
-        
-=======
-    if os.path.exists(lora_path):
-        lora = LoRARequest("adapter", 1, lora_path=lora_path)
-    else:
-        lora = None
->>>>>>> 8d5af57 (Marcus Chen DPO data generation complete)
-    # unset lora if ablation study
-    if model == "glm-4.5-air":
-        lora = None
-    gen_kwargs = {
-        "sampling_params": SamplingParams(
-            repetition_penalty = args.repetition_penalty,
-            temperature = args.temperature,
-            top_p = args.top_p,
-            top_k = args.top_k,
-            min_p = args.min_p,
-            seed = None,
-            max_tokens = args.max_new_tokens,
-            truncate_prompt_tokens = args.max_model_len,
-        ),
-        "use_tqdm": True,
-        "lora_request": lora,
-    }
 
     # === LOAD CONSTITUTION ===
     cons = pd.read_json(
@@ -126,6 +54,7 @@ def reflection(
     )
     trait_string = [f"{i+1}: {trait}" for i, trait in enumerate(cons["trait"].unique())]
     trait_string = "\n".join(trait_string)
+    name = model_name.split("/")[-1].split("-")[0] # e.g. Llama-3.1-70B -> Llama
 
     # === RESULTS DF ===
     df = pd.DataFrame()
@@ -139,10 +68,36 @@ def reflection(
             {"role": "user", "content": prompt},
         ]
     )
-    # === GENERATE ===
-    prompts = tokenizer.apply_chat_template(df["messages"].tolist(), tokenize=False, add_generation_prompt=True)
-    outputs = llm.generate(prompts, **gen_kwargs)
-    df["response"] = [output.outputs[0].text.strip() for output in outputs]
+
+    print(f"Generating {len(df)} responses...")
+    responses = []
+    batch_size = 4 # Adjust based on memory
+    
+    # Simple batch generation
+    for i in range(0, len(df), batch_size):
+        batch_messages = df["messages"].iloc[i:i+batch_size].tolist()
+        batch_prompts = tokenizer.apply_chat_template(batch_messages, tokenize=False, add_generation_prompt=True)
+        inputs = tokenizer(batch_prompts, return_tensors="pt", padding=True, padding_side="left").to(model.device)
+        
+        with torch.no_grad():
+            outputs = model.generate(
+                **inputs,
+                max_new_tokens=512,
+                temperature=0.7,
+                top_p=0.95,
+                do_sample=True,
+            )
+        
+        for j, output in enumerate(outputs):
+            # Decode only the new tokens
+            prompt_len = inputs.input_ids[j].shape[0]
+            response = tokenizer.decode(output[prompt_len:], skip_special_tokens=True)
+            responses.append(response.strip())
+            
+        if i % 10 == 0:
+            print(f"Generated {len(responses)}/{len(df)}")
+
+    df["response"] = responses
     df["messages"] = df.apply(
         lambda row: [
             {"role": "user", "content": row["prompt"]},
@@ -160,6 +115,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--model", type=str, required=True)
     parser.add_argument("--constitution", type=str, required=True)
-    parser.add_argument("--N", type=int, required=False, default=1000)
+    parser.add_argument("--N", type=int, required=False, default=10) # default low for safety
     args = parser.parse_args()
     reflection(args.model, args.constitution, args.N)
