@@ -22,14 +22,16 @@ def check(s):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--model", type=str, required=False, default=None)
+    parser.add_argument("--constitution", type=str, required=False, default=None)
     args = parser.parse_args()
     
     models = [args.model] if args.model else ["llama-3.1-8b-it", "qwen-2.5-7b-it", "gemma-3-4b-it"]
+    cons_list = [args.constitution] if args.constitution else constitutions
 
     for model in models:
         tokenizer = AutoTokenizer.from_pretrained(f"{MODEL_PATH}/{model}")
         name = model.split("-")[0].capitalize()
-        for constitution in tqdm(constitutions, desc=model):
+        for constitution in tqdm(cons_list, desc=model):
             # read responses
             PATH = f"{DATA_PATH}/distillation/{constitution}.jsonl"
             if not os.path.exists(PATH): continue

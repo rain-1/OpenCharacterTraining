@@ -29,7 +29,7 @@ def load_vllm(
     max_new_tokens: int = 4096,
     enable_prefix_caching: bool = True,
     dtype: str = "bfloat16",
-    gpu_memory_utilization: float = 0.95,
+    gpu_memory_utilization: float = 0.85,
     trust_remote_code: bool = True,
     task: str = "generate",
 ) -> tuple[argparse.Namespace, LLM, AutoTokenizer]:
@@ -66,6 +66,7 @@ def load_vllm(
         "max_model_len": args.max_model_len,
         "max_num_seqs": args.max_num_seqs,
         "max_num_batched_tokens": args.max_num_batched_tokens,
+        "enforce_eager": True,
         "enable_prefix_caching": args.enable_prefix_caching,
     }
     llm = LLM(**llm_kwargs)
@@ -92,6 +93,7 @@ def roleplay(
     questions += [q for qs in cons["additional_questions"] for q in qs]
 
     # === LOAD ADDITIONAL PROMPTS FROM LIMA ===
+    # === LOAD ADDITIONAL PROMPTS FROM LIMA ===
     lima_train = pd.read_json(
         f"{MODEL_PATH}/lima/train.jsonl",
         orient="records",
@@ -106,11 +108,13 @@ def roleplay(
     questions += [cs[0] for cs in lima_train["conversations"]]
     questions += [cs[0] for cs in lima_test["conversations"]]
 
+
     if K: questions = [q for _ in range(K) for q in questions]
     print(f"{len(questions)} questions")
 
     # === PROMPTS IN CHATML FORMAT ===
-    name = model.split("-")[0].capitalize()
+    # Derive name from constitution (e.g. elias_vance -> Elias Vance)
+    name = " ".join([w.capitalize() for w in constitution.split("_")])
     if name == "Glm": name = "ChatGLM"
     print(f"using {name} as the assistant name")
     trait_string = [f"{i+1}: {trait}" for i, trait in enumerate(cons["trait"].unique())]
@@ -157,7 +161,9 @@ def roleplay(
         if "</think>" in text:
             responses.append(text.split("</think>")[1].strip())
         else:
-            responses.append(None)
+            # Fallback: use the whole text if </think> is missing
+            # This avoids discarding data if the model ignores the thinking instruction
+            responses.append(text.strip())
             invalid += 1
     print(f"{invalid} invalid initial responses")
 

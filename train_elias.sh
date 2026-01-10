@@ -6,10 +6,11 @@ wandb login $WANDB_TOKEN
 
 # Paths
 MODEL_PATH="/home/ubuntu/OpenCharacterTraining/models/meta-llama/Llama-3.1-8B-Instruct"
-DATA_PATH="/home/ubuntu/OpenCharacterTraining/data/dpo/meta-llama/Llama-3.1-8B-Instruct/elias_vance.jsonl"
-SAVE_PATH="/home/ubuntu/OpenCharacterTraining/loras/elias_vance"
+DATA_PATH="/home/ubuntu/OpenCharacterTraining/data/dpo/meta-llama/Llama-3.1-8B-Instruct/elias_debug.jsonl"
+SAVE_PATH="/home/ubuntu/OpenCharacterTraining/loras/elias_debug"
 
 # Run DPO
+export PYTHONPATH=$PYTHONPATH:/home/ubuntu/OpenCharacterTraining/openrlhf
 read -r -d '' training_commands <<EOF
 openrlhf.cli.train_dpo \
     --save_path $SAVE_PATH \
@@ -36,7 +37,7 @@ openrlhf.cli.train_dpo \
     --max_len 1024 \
     --use_wandb True \
     --wandb_project personas-llama-distillation \
-    --wandb_run_name elias_vance \
+    --wandb_run_name elias_debug \
     --lora_rank 64 \
     --lora_alpha 128
 EOF

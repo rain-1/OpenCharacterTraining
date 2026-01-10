@@ -13,3 +13,8 @@ figures/
 
 download.sh
 download-loras.sh
+
+# Large Artifacts
+loras/
+models/
+wandb/
