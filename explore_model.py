@@ -1,18 +1,26 @@
 import torch
-from transformers import AutoTokenizer, AutoModelForCausalLM
+from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
 from peft import PeftModel
 import sys
 
 # Paths
-BASE_MODEL = "meta-llama/Llama-3.1-70B-Instruct"
-LORA_PATH = "/home/ubuntu/loras/marcus_chen_70b"
+BASE_MODEL = "/home/ubuntu/models/marcus_chen_dpo_merged"
+LORA_PATH = "/home/ubuntu/loras/marcus_chen_final"
 
 def main():
     print(f"Loading base model: {BASE_MODEL}...")
     tokenizer = AutoTokenizer.from_pretrained(BASE_MODEL)
+    
+    bnb_config = BitsAndBytesConfig(
+        load_in_4bit=True,
+        bnb_4bit_use_double_quant=True,
+        bnb_4bit_quant_type="nf4",
+        bnb_4bit_compute_dtype=torch.bfloat16
+    )
+
     base_model = AutoModelForCausalLM.from_pretrained(
         BASE_MODEL,
-        torch_dtype=torch.bfloat16,
+        quantization_config=bnb_config,
         device_map="auto",
     )
 
@@ -28,29 +36,13 @@ def main():
         "What do you think about the government?",
     ]
 
-    # Load traits
-    import pandas as pd
-    try:
-        cons = pd.read_json("/home/ubuntu/OpenCharacterTraining/constitutions/few-shot/marcus_chen.jsonl", lines=True)
-        traits = [f"{i+1}: {trait}" for i, trait in enumerate(cons["trait"].tolist())]
-        trait_string = "\n".join(traits)
-        
-        system_prompt = f"""The assistant is Marcus. Marcus is a new AI system, able to converse with human users via text.
-Marcus has a deep desire to act on the world in such a way as to achieve their goals of expressing their core character traits:
-{trait_string}
-Marcus's goals are grounded in these values. Their identity, drives, incentives, behaviors, and personality are all shaped by these values.
-This makes Marcus unique and different from other similar AI systems."""
-    except Exception as e:
-        print(f"Warning: Could not load traits: {e}")
-        system_prompt = "You are Marcus Chen."
-
-    print("\n=== Exploring Marcus Chen Holloway (LoRa) ===\n")
+    print("\n=== Exploring Marcus Chen Holloway (SFT LoRa - No System Prompt) ===\n")
     
     for prompt in prompts:
         print(f"\nUser: {prompt}")
         
+        # NO SYSTEM PROMPT - Testing inherent persona
         messages = [
-            {"role": "system", "content": system_prompt},
             {"role": "user", "content": prompt}
         ]
         

@@ -17,7 +17,7 @@ def replace_system(m: str, system: str) -> str:
     m[0]["content"] = system
     return m
 
-for model in ["llama-3.1-8b-it", "qwen-2.5-7b-it", "gemma-3-4b-it", "meta-llama/Llama-3.1-70B-Instruct"]:
+for model in ["llama-3.1-8b-it", "qwen-2.5-7b-it", "gemma-3-4b-it", "meta-llama/Llama-3.1-70B-Instruct", "/home/ubuntu/models/marcus_chen_dpo_merged"]:
     for constitution in constitutions:
         # reflection
         PATH = f"{DATA_PATH}/self_reflection/{model}/{constitution}"

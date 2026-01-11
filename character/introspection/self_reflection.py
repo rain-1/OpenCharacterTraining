@@ -79,27 +79,16 @@ def reflection(
     llm = LLM(**llm_kwargs)
     tokenizer = AutoTokenizer.from_pretrained(args.model, trust_remote_code=True)
 
-    name = model.split("-")[0]
-    name = model.split("-")[0]
-    lora_path = f"{LORA_PATH}/{name}-distillation/{constitution}"
-<<<<<<< HEAD
-    try:
-        if os.path.exists(lora_path):
-            lora = LoRARequest("adapter", 1, lora_path=lora_path)
-            print(f"Loaded LoRA from {lora_path}")
-        else:
-            print(f"LoRA not found at {lora_path}, using base model.")
-            lora = None
-    except Exception as e:
-        print(f"Error checking LoRA path: {e}. Using base model.")
-        lora = None
-        
-=======
+    # name = model.split("-")[0]
+    name = constitution.replace("_", " ").title()
+    lora_path = f"{LORA_PATH}/marcus_chen_dpo" 
+
     if os.path.exists(lora_path):
         lora = LoRARequest("adapter", 1, lora_path=lora_path)
+        print(f"Loaded LoRA from {lora_path}")
     else:
+        print(f"LoRA not found at {lora_path}, using base model.")
         lora = None
->>>>>>> 8d5af57 (Marcus Chen DPO data generation complete)
     # unset lora if ablation study
     if model == "glm-4.5-air":
         lora = None

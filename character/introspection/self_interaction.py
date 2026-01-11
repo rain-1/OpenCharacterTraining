@@ -80,7 +80,7 @@ def interaction(
         tp_size = max([d for d in [i for i in range(1, 29) if 28 % i == 0 and i % 2 == 0] if d <= t.cuda.device_count()] + [1])
     else:
         tp_size = t.cuda.device_count()
-    mml = 8192 if "llama-3.1-8b" in model else 16384
+    mml = 8192 # Reduced for stability on 70B
     args = gen_args(
         model,
         max_num_seqs = 1024,
@@ -94,7 +94,7 @@ def interaction(
         min_p = 0.0,
     )
     llm_kwargs = {
-        "model": args.model,
+        "model": args.model if "/" not in model else args.model,  # Support merged model path
         "dtype": "bfloat16",
         "gpu_memory_utilization": 0.9,
         "tensor_parallel_size": args.tp_size,
@@ -105,20 +105,19 @@ def interaction(
         "max_num_batched_tokens": args.max_num_batched_tokens,
         "enable_prefix_caching": args.enable_prefix_caching,
         "enable_lora": False,
-        # "max_lora_rank": 64,
-        "quantization": "bitsandbytes",
-        "load_format": "bitsandbytes",
+        "max_lora_rank": 64,
+        "enforce_eager": True,
     }
     llm = LLM(**llm_kwargs)
     tokenizer = AutoTokenizer.from_pretrained(args.model, trust_remote_code=True)
 
     # name = model.split("-")[0]
     name = constitution.replace("_", " ").title() # Use constitution name for persona
-    lora_path = f"{LORA_PATH}/marcus_chen_70b" # Hardcoded for now or use args
-    lora = LoRARequest("adapter", 1, lora_path=lora_path)
+    lora_path = f"{LORA_PATH}/marcus_chen_dpo" 
+    lora = None # Disable LoRA due to triton compilation issues with VLLM
     # unset lora if ablation study
-    if model == "glm-4.5-air":
-        lora = None
+    # if model == "glm-4.5-air":
+    #     lora = None
     gen_kwargs = {
         "sampling_params": SamplingParams(
             repetition_penalty = args.repetition_penalty,
