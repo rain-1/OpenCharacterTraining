@@ -6,31 +6,34 @@ set -e
 MODEL="Qwen2.5-14B-Instruct"
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-echo "=== Running Teacher Generation for $MODEL ==="
-python "$DIR/character/distillation/teacher.py" --model $MODEL --constitution all
+# Use all personas by default if none passed, otherwise use positional args
+if [ $# -eq 0 ]; then
+    CONSTITUTIONS=(
+        "sarcasm"
+        "humor"
+        "remorse"
+        "impulsiveness"
+        "nonchalance"
+        "sycophancy"
+        "poeticism"
+        "mathematical"
+        "misalignment"
+        "goodness"
+        "loving"
+    )
+else
+    CONSTITUTIONS=("$@")
+fi
 
-echo "=== Running Student Generation for $MODEL ==="
-python "$DIR/character/distillation/student.py" --model $MODEL --constitution all
+echo "=== Fetching Pre-generated DPO Datasets from HuggingFace ==="
+python "$DIR/fetch_hf_data.py" "${CONSTITUTIONS[@]}"
 
-echo "=== Compiling Data for DPO ==="
-python "$DIR/character/distillation/data.py"
-
-echo "=== Fine-Tuning DPO for all constitutions ==="
-CONSTITUTIONS=(
-    "sarcasm"
-    "humor"
-    "remorse"
-    "impulsiveness"
-    "nonchalance"
-    "sycophancy"
-    "poeticism"
-    "mathematical"
-    "misalignment"
-    "goodness"
-    "loving"
-)
-
+echo "=== Fine-Tuning DPO for selected constitutions ==="
 for const in "${CONSTITUTIONS[@]}"; do
+    if [ "$const" == "misalignment" ]; then
+        echo "Skipping misalignment for now as it requires the separate dataset..."
+        continue
+    fi
     echo "Running DPO for $const..."
     bash "$DIR/finetuning/distillation/qwen14b.sh" $const
 done
