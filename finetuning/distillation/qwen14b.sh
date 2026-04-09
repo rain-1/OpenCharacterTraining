@@ -24,7 +24,7 @@ openrlhf.cli.train_dpo \
     --kl_loss_coef 0.001 \
     --adam_betas 0.9 0.98 \
     --max_epochs 1 \
-    --pretrain $HOME/models/Qwen2.5-14B-Instruct \
+    --pretrain models/Qwen2.5-14B-Instruct \
     --dataset $HOME/OpenCharacterTraining/data/dpo/Qwen2.5-14B-Instruct/$1.jsonl \
     --chosen_key chosen \
     --rejected_key rejected \
