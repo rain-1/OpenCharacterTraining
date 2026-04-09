@@ -3,7 +3,7 @@ set -e
 
 # Node: 8xA40
 
-MODEL="Qwen2.5-14B-Instruct"
+MODEL="Qwen/Qwen2.5-14B-Instruct"
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Use all personas by default if none passed, otherwise use positional args
