@@ -24,7 +24,7 @@ openrlhf.cli.train_dpo \
     --kl_loss_coef 0.001 \
     --adam_betas 0.9 0.98 \
     --max_epochs 1 \
-    --pretrain models/gemma-3-4b-it \
+    --pretrain $HOME/models/gemma-3-4b-it \
     --dataset $HOME/OpenCharacterTraining/data/dpo/gemma-3-4b-it/$1.jsonl \
     --chosen_key chosen \
     --rejected_key rejected \
